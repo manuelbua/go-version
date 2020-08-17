@@ -9,17 +9,16 @@ import (
 )
 
 const Unversioned = "(unversioned)"
-const Undefined = "(undefined)"
 
 // populated via -ldflags
 var (
 	shortVersion = Unversioned
-	commitHash   = Undefined
-	commitStamp  = Undefined
-	buildUser    = Undefined
-	buildHost    = Undefined
-	buildStamp   = Undefined
-	buildDirty   = Undefined
+	commitHash   = ""
+	commitStamp  = ""
+	buildUser    = ""
+	buildHost    = ""
+	buildStamp   = ""
+	buildDirty   = ""
 )
 
 type VersionInformation struct {
@@ -35,13 +34,13 @@ type VersionInformation struct {
 
 var VersionInfo = VersionInformation{
 	Short:       Unversioned,
-	CommitHash:  Undefined,
-	CommitStamp: Undefined,
-	BuildUser:   Undefined,
-	BuildHost:   Undefined,
-	BuildStamp:  Undefined,
-	BuildDirty:  Undefined,
-	Long:        Undefined,
+	CommitHash:  "",
+	CommitStamp: "",
+	BuildUser:   "",
+	BuildHost:   "",
+	BuildStamp:  "",
+	BuildDirty:  "",
+	Long:        "",
 }
 
 func init() {

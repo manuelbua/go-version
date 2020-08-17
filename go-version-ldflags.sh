@@ -8,11 +8,11 @@ set -e
 # 3. feed this script output to the "go build -ldflags" switch
 
 # sample build script
-# version_pkg="example.com/author/project/pkg/version"
+# version_pkg="example.com/author/project/pkg/version" (or empty for default one)
 # go build -o bin/project -ldflags="$(go-version-ldflags.sh "${version_pkg}")" cmd/project/main.go
 
 
-VERSION_PKG=${1:-$(go list -m)/version}
+VERSION_PKG=${1:-github.com/manuelbua/go-version}
 
 # vX.Y[+Z] (ie. v1, v2.1, v2.1-4)
 BASE_VERSION=$(git describe --always --tags --match=v* | sed 's/-\([0-9]*\).*/+\1/')
