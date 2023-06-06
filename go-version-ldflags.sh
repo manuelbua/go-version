@@ -13,12 +13,25 @@ set -e
 
 
 VERSION_PKG=${1:-github.com/manuelbua/go-version}
+VFLAGS=''
 
-# vX.Y[+Z] (ie. v1, v2.1, v2.1-4)
-BASE_VERSION=$(git describe --always --tags --match=v* | sed 's/-\([0-9]*\).*/+\1/')
+# current branch
+BRANCH="$(git branch --show-current)"
 
-# "-dev" if working tree is dirty
-BUILD_DIRTY=$([ -z "$(git status -s)" ] || echo "-dev")
+# vX.Y[+Z] (ie. v1, v2.1, v0.2-5-g76dc5cb)
+# BASE_VERSION=$(git describe --always --tags --match=v* | sed 's/-\([0-9]*\).*/+\1/')
+
+# get last reachable tag and count tag to head
+# note: tag is reachable if annotated and prefixed with a "v" character
+COUNT_TAG_TO_HEAD=''
+LAST_TAG="$(git describe --abbrev=0 --match=v* 2>/dev/null)"
+if [ -n "$LAST_TAG" ]; then
+    # tag found
+    COUNT_TAG_TO_HEAD="$(git rev-list $LAST_TAG..HEAD --count)"
+fi
+
+# flag if working tree is dirty
+BUILD_DIRTY=$([ -z "$(git status -s)" ] || echo "true")
 
 BUILD_USER=$(id -u -n)
 BUILD_HOST=$(hostname -s)
@@ -30,7 +43,10 @@ vflag() {
     VFLAGS="$VFLAGS -X $VERSION_PKG.$1=$2"
 }
 
-vflag shortVersion $BASE_VERSION
+# vflag baseVersion $BASE_VERSION
+vflag branch $BRANCH
+vflag tag $LAST_TAG
+vflag countTagToHead $COUNT_TAG_TO_HEAD
 vflag commitHash $COMMIT_HASH
 vflag commitStamp $COMMIT_STAMP
 vflag buildUser $BUILD_USER
