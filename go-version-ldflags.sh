@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
-set -e
+
+inside_a_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
+if [ ! "$inside_a_repo" ]; then
+    echo 'Git repository not found.'
+    exit 1
+fi
+
 
 # Inspired by https://github.com/ofabry/version
 
@@ -24,7 +30,7 @@ BRANCH="$(git branch --show-current)"
 # get last reachable tag and count tag to head
 # note: tag is reachable if annotated and prefixed with a "v" character
 COUNT_TAG_TO_HEAD=''
-LAST_TAG="$(git describe --abbrev=0 --match=v* 2>/dev/null)"
+LAST_TAG="$(git describe --tags --abbrev=0 --match=v* 2>/dev/null)"
 if [ -n "$LAST_TAG" ]; then
     # tag found
     COUNT_TAG_TO_HEAD="$(git rev-list $LAST_TAG..HEAD --count)"
@@ -54,4 +60,9 @@ vflag buildHost $BUILD_HOST
 vflag buildStamp $BUILD_STAMP
 vflag buildDirty $BUILD_DIRTY
 
+# generate the smallest binary possible with "-s -w"
+#   -s, turns off Go symbol table generation
+#       (can't use "go tool nm" anymore)
+#   -w, turns off DWARF debug info and metadata
+#       (can't use gdb, pprof)
 echo "-s -w $VFLAGS"
